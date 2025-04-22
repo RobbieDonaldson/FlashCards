@@ -23,7 +23,8 @@ namespace FlashCards.Server.Controllers
             return Ok(await _dataService.GetSurveysAsync());
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
+        //[AllowAnonymous]
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult> GetSurveyAsync(int id)

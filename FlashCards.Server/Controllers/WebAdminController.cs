@@ -101,7 +101,7 @@ namespace FlashCards.Server.Controllers
 
                         if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
                         {
-                            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+                            await _userManager.AddToRoleAsync(newUser, UserRoles.Admin);
                         }
                     }
 
@@ -112,10 +112,10 @@ namespace FlashCards.Server.Controllers
 
                     if (await _roleManager.RoleExistsAsync(UserRoles.User))
                     {
-                        await _userManager.AddToRoleAsync(user, UserRoles.User);
+                        await _userManager.AddToRoleAsync(newUser, UserRoles.User);
                     }
                 }
-                return Ok(new ResponseModel<string>() { Data = user.UserName, Message = "User registered!", Success = true });
+                return Ok(new ResponseModel<string>() { Data = newUser.UserName, Message = "User registered!", Success = true });
             }
         }
 
