@@ -13,7 +13,7 @@ using static FlashCards.Server.Models.Constants;
 namespace FlashCards.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class WebAdminController : ControllerBase
     {
 
@@ -32,9 +32,8 @@ namespace FlashCards.Server.Controllers
             _configuration = configuration;
         }
 
-        [AllowAnonymous]
-        [HttpPost, Route("[controller]/login")]
-
+        //[AllowAnonymous]
+        [HttpPost, Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
@@ -55,17 +54,13 @@ namespace FlashCards.Server.Controllers
 
                 var token = GetToken(authClaims);
 
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
+                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             }
             return Unauthorized();
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost, Route("[controller]/register")]
+        [HttpPost, Route("register")]
 
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {

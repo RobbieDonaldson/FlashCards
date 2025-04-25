@@ -1,0 +1,14 @@
+.login-form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: 20px auto;
+  }
+  
+  .login-form mat-form-field {
+    margin-bottom: 20px;
+  }
+  
+  .login-form button {
+    margin-top: 10px;
+  }

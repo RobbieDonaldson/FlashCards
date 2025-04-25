@@ -2,6 +2,7 @@ using FlashCards.Server.Data;
 using FlashCards.Server.Services.Classes;
 using FlashCards.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -64,17 +65,18 @@ namespace website.Server
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(name: "corsPolicy",
+                options.AddPolicy(name: "CorsPolicy",
                     policy =>
                     {
-                        policy.AllowAnyHeader();
-                        policy.AllowAnyMethod();
+                        policy.WithHeaders("Content-Type", "Authorization");
+                        policy.WithMethods("GET","POST","OPTIONS");
                         policy.AllowCredentials();
                         policy.SetIsOriginAllowed((host) => true);
                         policy.WithOrigins(
                             "https://localhost:57888"
                         );
-                    });
+                    }
+                );
             });
 
             builder.Services.AddControllers();
@@ -115,38 +117,21 @@ namespace website.Server
 
             var app = builder.Build();
 
-
-
             app.UseDefaultFiles();
+
             app.UseStaticFiles();
 
             app.UseSerilogRequestLogging();
 
-            app.Use((ctx, next) => {
-                var headers = ctx.Response.Headers;
-
-                headers.Append("X-Frame-Options", "SAMEORIGIN");
-                headers.Append("X-XSS-Protection", "1; mode=block");
-                headers.Append("X-Content-Type-Options", "nosniff");
-                headers.Append("Referrer-Policy", "no-referrer");
-                headers.Append("X-Permitted-Cross-Domain-Policies", "none");
-                headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-                headers.Append("Permissions-Policy", "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()");
-                headers.Append("Content-Security-Policy", "frame-ancestors 'self'");
-
-
-                return next();
-            });
-
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
 
-            app.UseCors("corsPolicy");
+            app.UseHttpsRedirection();
 
             app.UseAuthentication();
 
